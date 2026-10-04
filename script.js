@@ -1,0 +1,13 @@
+const services=[
+ {id:'service-1',name:'Premium Service',price:999,tag:'POPULAR',desc:'A complete premium appointment package with a professional experience.'},
+ {id:'service-2',name:'Standard Service',price:599,tag:'BEST VALUE',desc:'Reliable everyday service for customers who want quality at a clear price.'},
+ {id:'service-3',name:'Quick Service',price:299,tag:'FAST',desc:'A quick appointment option for simple requirements and busy schedules.'}
+];
+const cards=document.querySelector('#serviceCards');
+const service=document.querySelector('#service'), selectedService=document.querySelector('#selectedService'), selectedPrice=document.querySelector('#selectedPrice');
+function render(){cards.innerHTML=services.map(s=>`<article class="service" data-id="${s.id}"><span class="tag">${s.tag}</span><h3>${s.name}</h3><p>${s.desc}</p><div class="price"><strong>₹${s.price.toLocaleString('en-IN')}</strong><span class="choose">SELECT →</span></div></article>`).join('');document.querySelectorAll('.service').forEach(c=>c.onclick=()=>select(c.dataset.id))}
+function select(id){const s=services.find(x=>x.id===id);service.value=s.name;selectedService.textContent=s.name;selectedPrice.textContent='₹'+s.price.toLocaleString('en-IN');document.querySelectorAll('.service').forEach(c=>c.classList.toggle('active',c.dataset.id===id));document.querySelector('#book').scrollIntoView({behavior:'smooth',block:'start'})}
+render();
+const date=document.querySelector('#date'); const today=new Date(); date.min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+document.querySelector('#bookingForm').addEventListener('submit',e=>{e.preventDefault();if(!service.value){show('Please select a service first.');document.querySelector('#services').scrollIntoView({behavior:'smooth'});return}const data={service:service.value,price:selectedPrice.textContent,name:document.querySelector('#name').value,phone:document.querySelector('#phone').value,date:date.value,time:document.querySelector('#time').value,note:document.querySelector('#note').value,createdAt:new Date().toISOString()};localStorage.setItem('demoBooking',JSON.stringify(data));show('Booking submitted successfully ✓');e.target.reset();service.value='';selectedService.textContent='Choose a service below';selectedPrice.textContent='₹0';document.querySelectorAll('.service').forEach(c=>c.classList.remove('active'))});
+function show(msg){const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500)}document.querySelector('#year').textContent=new Date().getFullYear();
